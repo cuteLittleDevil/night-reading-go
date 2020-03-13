@@ -200,24 +200,22 @@ func merge(intervals []Interval) []Interval {
 	}
 
 	sort.Slice(intervals, func(i, j int) bool {
-		return intervals[i].Start < intervals[j].Start
+		return intervals[i].Start > intervals[i].Start
 	})
 
 	res := make([]Interval, 0)
-	swap := Interval{}
-	for k, v := range intervals {
-		if k == 0 {
-			swap = v
-			continue
-		}
-		if v.Start <= swap.End {
-			swap.End = v.End
-		} else {
-			res = append(res, swap)
-			swap = v
+	previous := intervals[0]
+
+	for i := 1; i < len(intervals); i++ {
+		last := intervals[i]
+		if previous.End >= last.Start && last.End > previous.End {
+			previous.End = last.End
+		}else if last.Start > previous.End{
+			res = append(res, previous)
+			previous = last
 		}
 	}
-	res = append(res, swap)
+	res = append(res, previous)
 	return res
 }
 ```
